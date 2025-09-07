@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: istio-ingressgateway
+  namespace: istio-system
+spec:
+  type: LoadBalancer
+  selector:
+    # istio-ingressgateway 파드 선택(service만 설치되고 pod가 설치되지 않아 월요일 밤늦게 4시간을 날려먹음)
+    app: istio-ingressgateway 
+  ports:
+    - name: http2
+      port: 80
+      targetPort: 80
+    #  nodePort: 30080     # docker desktop은 80을 nodeport로 지정할 수 없으므로 loadbalancer로 지정해서 80 사용
+    - name: https
+      port: 443
+      targetPort: 443
+    #  nodePort: 30443

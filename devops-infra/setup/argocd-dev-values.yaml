@@ -1,0 +1,13 @@
+# argocd 서비스를 istio gateway에 묶어서 서비스하기 위해 http -> https 리다이렉트 제거
+server:
+  # argocd-server extra args
+  extraArgs:
+    - --insecure       # HTTPS 리다이렉트 제거
+  service:
+    type: ClusterIP     # NodePort나 LoadBalancer로 바꾸고 싶으면 여기 수정
+  ingress:
+    enabled: false      # Ingress를 사용하지 않을 경우
+configs:
+  secret:
+    # 'admin' 비번을 apache htpasswd 방식으로 암호화한 문자열(htpasswd -nbBC 10 "" admin | tr -d ':\n' | sed 's/$2y/$2a/')
+    argocdServerAdminPassword: $2a$10$HfRDVUmYAudkmqM.UqwKSudNyzFXecjwyApMBfBNT1PwgoSRyVvum

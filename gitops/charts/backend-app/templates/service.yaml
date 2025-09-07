@@ -1,0 +1,19 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: backend-app-vs
+  namespace: {{ .Release.Namespace }}
+spec:
+  hosts:
+    - "{{ .Values.ingress.host }}"
+  gateways:
+    - backend-app-gateway
+  http:
+    - match:
+        - uri:
+            prefix: "/"
+      route:
+        - destination:
+            host: {{ include "backend-app.fullname" . }}
+            port:
+              number: {{ .Values.service.port }}

@@ -1,0 +1,61 @@
+# gitea 서비스를 개발환경용으로 최소 container로 설치
+service:
+  http:
+    type: ClusterIP
+
+# Persistence 끄기 (개발용)
+persistence:
+  enabled: true
+
+# 내장 DB 관련 설정 제거
+#postgresql: {}
+#postgresql-ha: {}
+#valkey: {}
+#valkey-cluster: {}
+#mariadb: {}
+#global: {}
+
+postgresql-ha:
+  enabled: false
+
+valkey:
+  enabled: false
+
+valkey-cluster:
+  enabled: false
+
+global:
+  postgresql:
+    enabled: false
+
+# Gitea 설정
+gitea:
+  admin:
+    username: admin
+    password: admin
+    email: admin@example.local
+
+  config:
+    database:
+      DB_TYPE: sqlite3
+      HOST: ""
+      NAME: gitea
+      USER: ""
+      PASSWD: ""
+    server:
+      ROOT_URL: "http://gitea.k8s.com/"
+      SSH_DOMAIN: "gitea.k8s.com"
+      DOMAIN: "gitea.k8s.com"
+    security:
+      # 비번 최소길이 제한을 1자로 낮춤
+      MIN_PASSWORD_LENGTH: 1
+    # container registry package enable
+    packages:
+      ENABLED: true
+    packages.container:
+      ENABLED: true
+
+# 컨테이너 권한 문제 회피
+securityContext:
+  runAsUser: 1000
+  runAsGroup: 1000

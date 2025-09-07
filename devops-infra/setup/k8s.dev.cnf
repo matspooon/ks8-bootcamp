@@ -1,0 +1,20 @@
+[req]
+default_bits       = 2048
+distinguished_name = req_distinguished_name
+req_extensions     = req_ext
+prompt             = no
+
+[req_distinguished_name]
+C  = KR
+ST = Seoul
+L  = Seoul
+O  = k8sOrg
+CN = k8s.dev   # Common Name
+
+[req_ext]
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = gitea.k8s.dev   # SAN
+DNS.2 = jenkins.k8s.dev   # SAN
+DNS.3 = argocd.k8s.dev   # SAN

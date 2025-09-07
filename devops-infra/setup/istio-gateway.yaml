@@ -1,0 +1,25 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: msa-gateway
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway   # 기본 istio-ingressgateway 사용
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*.k8s.dev"       # 와일드카드 호스트
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      credentialName: selfsigned-gateway-cert   # 위에서 만든 Secret 이름
+    hosts:
+    - "*.k8s.dev"       # 와일드카드 호스트
+

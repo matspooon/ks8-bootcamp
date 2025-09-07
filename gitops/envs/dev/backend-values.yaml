@@ -1,0 +1,11 @@
+service:
+  port: 8080
+
+ingress:
+  enabled: true
+  host: backend.dev
+  gateway: istio-system/msa-gateway
+
+env:
+  - name: SPRING_PROFILES_ACTIVE
+    value: dev

@@ -1,0 +1,20 @@
+service:
+  port: 8080
+
+syncPolicy: {} # 수동배포
+
+ingress:
+  enabled: true
+  host: backend
+  gateway: istio-system/msa-gateway
+
+resources:
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+  requests:
+    cpu: "200m"
+    memory: "256Mi"
+env:
+  - name: SPRING_PROFILES_ACTIVE
+    value: prd

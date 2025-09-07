@@ -1,0 +1,14 @@
+replicaCount: 1
+
+image:
+  repository: gitea.k8s.com/k8s/backend-app
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+  host: backend.local

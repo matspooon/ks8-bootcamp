@@ -1,0 +1,65 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: gitea-vs
+  namespace: istio-system
+spec:
+  hosts:
+  - "gitea.k8s.dev"
+  gateways:
+  - msa-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /      # "/" 이하 모든 요청 매칭
+    rewrite:
+      uri: /         # Gitea 기본 컨텍스트 경로에 맞춰 rewrite
+    route:
+      - destination:
+          host: gitea-http.dev-tools.svc.cluster.local
+          port:
+            number: 3000
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: jenkins-vs
+  namespace: istio-system
+spec:
+  hosts:
+  - "jenkins.k8s.dev"
+  gateways:
+  - msa-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /      # "/" 이하 모든 요청 매칭
+    rewrite:
+      uri: /         # 기본 컨텍스트 경로에 맞춰 rewrite
+    route:
+      - destination:
+          host: jenkins.dev-tools.svc.cluster.local
+          port:
+            number: 8080
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: argocd-vs
+  namespace: istio-system
+spec:
+  hosts:
+  - "argocd.k8s.dev"
+  gateways:
+  - msa-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /      # "/" 이하 모든 요청 매칭
+    rewrite:
+      uri: /         # 기본 컨텍스트 경로에 맞춰 rewrite
+    route:
+      - destination:
+          host: argocd-server.argocd.svc.cluster.local
+          port:
+            number: 80

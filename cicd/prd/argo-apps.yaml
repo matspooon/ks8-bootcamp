@@ -1,0 +1,87 @@
+# 수동배포를 위해 syncPolicy automated를 {}로 설정
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: apps
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'http://gitea.dev-tools.svc.cluster.local:3000/dev/manifest-repo.git'
+    targetRevision: main
+    path: .
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated: {}
+  # 하위 앱들을 정의
+  sources: []
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: front-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'http://gitea.dev-tools.svc.cluster.local:3000/dev/manifest-repo.git'
+    targetRevision: main
+    path: frontend-app/k8s-manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: front
+  syncPolicy:
+    automated: {}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: backend-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'http://gitea.dev-tools.svc.cluster.local:3000/dev/manifest-repo.git'
+    targetRevision: main
+    path: backend-app/k8s-manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: backend
+  syncPolicy:
+    automated: {}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: user-mgmt-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'http://gitea.dev-tools.svc.cluster.local:3000/dev/manifest-repo.git'
+    targetRevision: main
+    path: user-mgmt-app/k8s-manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: user-mgmt
+  syncPolicy:
+    automated: {}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: istio-config
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'http://gitea.dev-tools.svc.cluster.local:3000/dev/manifest-repo.git'
+    targetRevision: main
+    path: istio-config
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: istio-system
+  syncPolicy:
+    automated: {}

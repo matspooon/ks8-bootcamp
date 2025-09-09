@@ -1,0 +1,40 @@
+controller:
+  serviceType: ClusterIP
+  admin:
+    username: admin
+    password: admin
+  jenkinsUrl: https://jenkins.k8s.dev/
+  javaOpts: >-
+    -Djenkins.model.Jenkins.crumbIssuerProxyCompatibility=true
+
+  JCasC:
+    configScripts:
+      podtemplate: |
+        jenkins:
+          clouds:
+            - kubernetes:
+                name: "kubernetes"
+                templates:
+                  - name: "kaniko-gradle"
+                    namespace: "dev-tools"
+                    label: "kaniko-gradle"
+                    serviceAccount: "jenkins"
+                    containers:
+                      - name: "kaniko"
+                        image: "gcr.io/kaniko-project/executor:debug"
+                        command: ["sleep"]
+                        args: ["infinity"]
+                        ttyEnabled: true
+                      - name: "gradle"
+                        image: "gradle:7.6-jdk17-alpine"
+                        command: ["sleep"]
+                        args: ["infinity"]
+                        ttyEnabled: true
+                    volumes:
+                      - secretVolume:
+                          mountPath: "/kaniko/.docker"
+                          secretName: "docker-registry-credential"
+                      - emptyDirVolume:
+                          mountPath: "/workspace"
+                          memory: false
+

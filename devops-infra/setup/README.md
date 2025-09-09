@@ -33,3 +33,8 @@ kubectl exec -it -n istio-system istiod-867796dbf9-56d2x -- curl -L http://argoc
 # port-forward : 대상 시스템의 서비스가 정상인지 체크
 kubectl port-forward -n dev-tools svc/gitea-http 3000:3000
 kubectl port-forward -n dev-tools svc/jenkins 8080:8080
+
+# 설치한 서비스의 env 확인
+* kubectl exec -it -n $namespace $pod_name -- printenv | grep JAVA_OPTS
+* ex:kubectl exec -it -n dev-tools jenkins-0 -- printenv | grep JAVA_OPTS
+

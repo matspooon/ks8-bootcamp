@@ -5,7 +5,7 @@ service:
 
 # Persistence 끄기 (개발용)
 persistence:
-  enabled: true
+  enabled: false
 
 # 내장 DB 관련 설정 제거
 #postgresql: {}
@@ -43,9 +43,9 @@ gitea:
       USER: ""
       PASSWD: ""
     server:
-      ROOT_URL: "http://gitea.k8s.com/"
-      SSH_DOMAIN: "gitea.k8s.com"
-      DOMAIN: "gitea.k8s.com"
+      ROOT_URL: "http://gitea.k8s.dev/"
+      SSH_DOMAIN: "gitea.k8s.dev"
+      DOMAIN: "gitea.k8s.dev"
     security:
       # 비번 최소길이 제한을 1자로 낮춤
       MIN_PASSWORD_LENGTH: 1

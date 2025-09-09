@@ -1,44 +1,60 @@
-pipeline {
-    agent any
-    environment {
-        REGISTRY = "gitea-http.dev-tools.svc.cluster.local:3000/admin"
-        IMAGE = "${REGISTRY}/backend-app"
-        BRANCH = "main"
+pipeline{
+  agent {
+    kubernetes {
+      label 'kaniko-gradle'
     }
-    stages {
-        stage('Checkout') {
-            steps {
-                git branch: "${BRANCH}", url: 'https://github.com/matspooon/backend-app-repo.git'
-            }
+  }
+  environment {
+    REGISTRY = 'gitea-http.dev-tools.svc.cluster.local:3000'
+    NAMESPACE = 'admin'
+    IMAGE = 'backend-app'
+    TAG = "${env.BUILD_NUMBER}"
+    BRANCH = 'main'
+    GITHUB_CRED_ID = 'github-matspooon-credential'
+  }
+  stages{
+    stage('gradle'){
+      steps{
+        container('gradle'){
+          sh 'git config --global --add safe.directory ${WORKSPACE}'
+
+          git url: 'https://github.com/matspooon/ks8-bootcamp.git',
+          branch: 'main',
+          credentialsId: "github-matspooon-credential"
+          
+          script {
+            env.GIT_COMMIT_SHA = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+          }          
+
+          dir('backend-app') {
+            sh 'pwd && ls -la'
+            sh 'sh ./gradlew clean build -x test'
+            sh 'mv ./app/build/libs/*.jar /workspace/'
+          }
         }
-        stage('Build') {
-            steps {
-                sh './gradlw clean bootJar'
-            }
-        }
-        stage('Docker Build & Push') {
-            steps {
-                script {
-                    def tag = "${env.BUILD_NUMBER}"
-                    sh "docker build -t ${IMAGE}:${tag} ."
-                    sh "echo $CR_PAT | docker login gitea-http.dev-tools.svc.cluster.local:3000 -u admin -p admin"
-                    sh "docker push ${IMAGE}:${tag}"
-                    env.IMAGE_TAG = tag
-                }
-            }
-        }
-        stage('Update GitOps Repo') {
-            steps {
-                sh '''
-                git clone https://github.com/your-org/gitops-repo.git
-                cd gitops-repo/envs/dev/values
-                yq e -i '.image.tag = strenv(IMAGE_TAG)' backend-values.yaml
-                git config user.email "cicd@your-org.com"
-                git config user.name "Jenkins CI"
-                git commit -am "Update backend-app image to tag ${IMAGE_TAG}"
-                git push
-                '''
-            }
-        }
+      }
     }
+    stage('docker'){
+      steps{
+        container('kaniko'){
+          sh """
+            DOCKER_CONFIG=/kaniko/.docker \
+            /kaniko/executor \
+              --context=dir://${env.WORKSPACE} \
+              --dockerfile backend-app/Dockerfile \
+              --destination ${REGISTRY}/${NAMESPACE}/${IMAGE}:${TAG} \
+              --skip-tls-verify
+          """
+        }
+      }
+      post{
+        success{
+            echo 'success Build & Push'
+        }
+        failure{
+            echo 'failure Build & Push'
+        }
+      }
+    }
+  }
 }

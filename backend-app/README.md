@@ -11,6 +11,7 @@ DB_PASSWORD
 2. docker build command
 docker build -t matspooon/k8sbasic/backend-app:latest .
 
+<pre>
 ==============================================================================
 참조.1
 ==============================================================================
@@ -96,3 +97,4 @@ dotenv 같은 확장을 설치하면 VS Code Debug Configuration에서 자동으
 Task 실행 시 → tasks.json의 env
 
 단순 실행 시 → VS Code 터미널에서 직접 export
+</pre>

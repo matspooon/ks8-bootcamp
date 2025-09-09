@@ -11,20 +11,33 @@ helm install gitea gitea-charts/gitea \
   --create-namespace \
   -f gitea-dev-values.yaml
 # helm chart upgrade
-helm upgrade gitea gitea-charts/gitea \
-  -n dev-tools \
-  -f gitea-dev-values.yaml
+helm upgrade gitea gitea-charts/gitea -n dev-tools -f gitea-dev-values.yaml
 
 # jenkins 설치
 helm repo add jenkins https://charts.jenkins.io
 helm repo update
-helm upgrade --install jenkins jenkins/jenkins \
---namespace dev-tools \
---set controller.admin.username=admin \
---set controller.admin.password=admin \
---set controller.serviceType=ClusterIP \
+helm upgrade --install jenkins jenkins/jenkins -n dev-tools -f jenkins-dev.yaml
+helm upgrade jenkins jenkins/jenkins -n dev-tools -f jenkins-dev.yaml
+
+# jenkins : kaniko 설치
+## k8s 클러스터내의 gitea에 kaniko executor image 등록 : 인터넷
+docker pull gcr.io/kaniko-project/executor:latest
+docker save gcr.io/kaniko-project/executor:latest -o kaniko.tar
+## k8s 클러스터내의 gitea에 kaniko executor image 등록 : 폐쇄망 내부에서
+docker login gitea.k8s.dev --username admin --password admin
+docker load -i kaniko.tar
+docker tag gcr.io/kaniko-project/executor:latest gitea.k8s.dev/admin/gcr.io/kaniko-project/executor:latest
+docker push gitea.k8s.dev/admin/gcr.io/kaniko-project/executor:latest
+## gitea의 docker registry용 Secret 생성
+kubectl create secret docker-registry docker-registry-credential \
+  --docker-server=gitea-http.dev-tools.svc.cluster.local:3000 \
+  --docker-username=admin \
+  --docker-password=admin \
+  --docker-email=admin@k8s.dev \
+  -n dev-tools
 
 
+# argocd 설치
 helm repo add argo https://argoproj.github.io/argo-helm
 helm repo update
 helm install argocd argo/argo-cd -n argocd --create-namespace -f argocd-dev-values.yaml

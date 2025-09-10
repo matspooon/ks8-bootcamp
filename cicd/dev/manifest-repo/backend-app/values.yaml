@@ -1,0 +1,11 @@
+app:
+  name: backend-app
+  namespace: default
+  replicas: 1
+  image: gitea-http.dev-tools.svc.cluster.local:3000/admin/backend-app:1.0.0
+  port: 8080
+  profile: dev
+  host: 
+    istio: "backend-dev.k8s.dev"
+    k8s: "backend-dev.dev-tools.svc.cluster.local"
+  path: "/"

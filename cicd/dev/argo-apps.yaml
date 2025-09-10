@@ -6,35 +6,12 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'http://gitea.dev-tools.svc.cluster.local:3000/dev/manifest-repo.git'
+    repoURL: 'http://gitea.dev-tools.svc.cluster.local:3000/admin/manifest-repo.git'
     targetRevision: main
     path: .
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-  # 하위 앱들을 정의
-  sources: []
----
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: front-app
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: 'http://gitea.dev-tools.svc.cluster.local:3000/dev/manifest-repo.git'
-    targetRevision: main
-    path: frontend-app/k8s-manifests
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: dev-frontend
   syncPolicy:
     automated:
       prune: true
@@ -50,34 +27,13 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'http://gitea.dev-tools.svc.cluster.local:3000/dev/manifest-repo.git'
+    repoURL: 'http://gitea.dev-tools.svc.cluster.local:3000/admin/manifest-repo.git'
     targetRevision: main
     path: backend-app/k8s-manifests
   destination:
     server: https://kubernetes.default.svc
     namespace: dev-backend
   syncPolicy:
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
----
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: user-mgmt-app
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: 'http://gitea.dev-tools.svc.cluster.local:3000/dev/manifest-repo.git'
-    targetRevision: main
-    path: user-mgmt-app/k8s-manifests
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: dev-user-mgmt
   syncPolicy:
     automated:
       prune: true

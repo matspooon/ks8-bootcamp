@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     #repoURL: https://github.com/your-org/gitops-repo.git
-    repoURL: https://gitea-http.dev-tools.svc.cluster.local/k8s/gitops.git
+    repoURL: https://gitea-http.dev-tools.svc.cluster.local/admin/manifest-repo.git
     path: charts/backend-app
     targetRevision: main
     helm:

@@ -22,6 +22,8 @@ spec:
       volumeMounts:
         - name: workspace
           mountPath: /workspace
+        - name: gradle-cache
+          mountPath: /home/jenkins/.gradle
     - name: kaniko
       image: gcr.io/kaniko-project/executor:debug
       command: ['sleep']
@@ -41,8 +43,12 @@ spec:
     - name: workspace
       emptyDir:
         memory: false
+    - name: gradle-cache
+      persistentVolumeClaim:
+        claimName: jenkins-gradle-cache
 """
       defaultContainer 'gradle'
+      customomWorkspace '/workspace'
     }
   }
   environment {
@@ -60,8 +66,8 @@ spec:
           sh 'git config --global --add safe.directory ${WORKSPACE}'
 
           git url: 'https://github.com/matspooon/ks8-bootcamp.git',
-          branch: 'main',
-          credentialsId: "github-matspooon-credential"
+          branch: env.BRANCH,
+          credentialsId: env.GITHUB_CRED_ID
           
           script {
             env.GIT_COMMIT_SHA = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
@@ -70,7 +76,7 @@ spec:
           dir('backend-app') {
             sh 'pwd && ls -la'
             sh 'sh ./gradlew clean build -x test'
-            sh 'mv ./app/build/libs/*.jar /workspace/'
+            sh 'mv ./app/build/libs/*.jar ./'
           }
         }
       }

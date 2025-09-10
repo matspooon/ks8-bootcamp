@@ -3,7 +3,7 @@ service:
 
 ingress:
   enabled: true
-  host: backend.dev
+  host: backend-dev
   gateway: istio-system/msa-gateway
 
 env:

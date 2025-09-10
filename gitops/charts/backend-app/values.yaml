@@ -1,11 +1,13 @@
 replicaCount: 1
 
 image:
-  repository: gitea.k8s.com/k8s/backend-app
+  repository: gitea.k8s.dev/admin/backend-app
   tag: "latest"
   pullPolicy: IfNotPresent
 
 service:
+  name: backend-app
+  namespace: apps
   type: ClusterIP
   port: 8080
 

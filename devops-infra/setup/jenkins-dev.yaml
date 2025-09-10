@@ -20,21 +20,21 @@ controller:
                     label: "kaniko-gradle"
                     serviceAccount: "jenkins"
                     containers:
-                      - name: "kaniko"
-                        image: "gcr.io/kaniko-project/executor:debug"
-                        command: ["sleep"]
-                        args: ["infinity"]
-                        ttyEnabled: true
-                      - name: "gradle"
-                        image: "gradle:7.6-jdk17-alpine"
-                        command: ["sleep"]
-                        args: ["infinity"]
-                        ttyEnabled: true
+                    - name: "kaniko"
+                      image: "gcr.io/kaniko-project/executor:debug"
+                      command: ["sleep"]
+                      args: ["infinity"]
+                      ttyEnabled: true
+                    - name: "gradle"
+                      image: "gradle:7.6-jdk17-alpine"
+                      command: ["sleep"]
+                      args: ["infinity"]
+                      ttyEnabled: true
                     volumes:
-                      - secretVolume:
-                          mountPath: "/kaniko/.docker"
-                          secretName: "docker-registry-credential"
-                      - emptyDirVolume:
-                          mountPath: "/workspace"
-                          memory: false
+                    - secretVolume:
+                      mountPath: "/kaniko/.docker"
+                      secretName: "docker-registry-credential"
+                    - emptyDirVolume:
+                      mountPath: "/workspace"
+                      memory: false
 

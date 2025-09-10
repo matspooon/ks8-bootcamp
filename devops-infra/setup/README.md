@@ -38,3 +38,8 @@ kubectl port-forward -n dev-tools svc/jenkins 8080:8080
 * kubectl exec -it -n $namespace $pod_name -- printenv | grep JAVA_OPTS
 * ex:kubectl exec -it -n dev-tools jenkins-0 -- printenv | grep JAVA_OPTS
 
+# 유용한 명령어들
+<pre>
+# k8s cluster에 세팅된 docker-registry-credential secret 확인
+kubectl get secret docker-registry-credential -n dev-tools -o jsonpath='{.data.\.dockerconfigjson}' | base64 -d
+</pre>

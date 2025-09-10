@@ -43,7 +43,9 @@ gitea:
       USER: ""
       PASSWD: ""
     server:
-      ROOT_URL: "http://gitea.k8s.dev/"
+      #ROOT_URL: "http://gitea.k8s.dev/"
+      # jenkins와 동일한 도메인 사용(k8s cluster 내부 통신용)
+      ROOT_URL: "http://gitea-http.dev-tools.svc.cluster.local:3000/"
       SSH_DOMAIN: "gitea.k8s.dev"
       DOMAIN: "gitea.k8s.dev"
     security:

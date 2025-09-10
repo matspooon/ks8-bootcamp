@@ -29,6 +29,7 @@ docker load -i kaniko.tar
 docker tag gcr.io/kaniko-project/executor:latest gitea.k8s.dev/admin/gcr.io/kaniko-project/executor:latest
 docker push gitea.k8s.dev/admin/gcr.io/kaniko-project/executor:latest
 ## gitea의 docker registry용 Secret 생성
+## from-file : kubectl로 생성되는 default 파일은 .dockerconfigjson 파일인데, kaniko가 요구하는 파일명은 config.json이여서 파일명 별도 지정
 kubectl create secret docker-registry docker-registry-credential \
   --docker-server=gitea-http.dev-tools.svc.cluster.local:3000 \
   --docker-username=admin \

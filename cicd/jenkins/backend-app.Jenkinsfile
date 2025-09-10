@@ -1,7 +1,48 @@
 pipeline{
   agent {
+    /*
     kubernetes {
       label 'kaniko-gradle'
+    }
+    kubernetes {
+      yamlFile 'cicd/jenkins/jenkins-pod-template.yaml'
+      defaultContainer 'gradle'
+    }
+    */
+    kubernetes {
+      yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+    - name: gradle
+      image: gradle:7.6-jdk17
+      command: ['sleep']
+      args: ['infinity']
+      volumeMounts:
+        - name: workspace
+          mountPath: /workspace
+    - name: kaniko
+      image: gcr.io/kaniko-project/executor:debug
+      command: ['sleep']
+      args: ['infinity']
+      volumeMounts:
+        - name: docker-config
+          mountPath: /kaniko/.docker
+        - name: workspace
+          mountPath: /workspace
+  volumes:
+    - name: docker-config
+      secret:
+        secretName: docker-registry-credential
+        items:
+          - key: .dockerconfigjson
+            path: config.json
+    - name: workspace
+      emptyDir:
+        memory: false
+"""
+      defaultContainer 'gradle'
     }
   }
   environment {
@@ -38,7 +79,6 @@ pipeline{
       steps{
         container('kaniko'){
           sh """
-            DOCKER_CONFIG=/kaniko/.docker \
             /kaniko/executor \
               --context=dir://${env.WORKSPACE} \
               --dockerfile backend-app/Dockerfile \

@@ -1,0 +1,18 @@
+repo server 환경변수 수정
+argocd-repo-server Deployment에 --repo-server-refresh-timeout-seconds 같은 옵션은 없지만,
+argocd-repo-server 는 기본적으로 3분 주기로 repo를 폴링합니다.
+이 주기를 줄이려면 argocd-cm (ConfigMap) 수정이 필요합니다.
+
+kubectl edit cm argocd-cm -n argocd
+
+
+그리고 다음 항목 추가:
+
+data:
+  # 리포지토리 새로고침 주기 (초 단위)
+  repositories.refresh.interval: 1m
+
+
+argocd-repo-server 재시작
+
+kubectl rollout restart deploy argocd-repo-server -n argocd

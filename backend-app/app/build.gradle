@@ -29,6 +29,10 @@ application {
     mainClass = 'dev.k8s.backend.App'
 }
 
+bootJar {
+    launchScript()
+}
+
 tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()

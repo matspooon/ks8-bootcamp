@@ -25,6 +25,11 @@ openssl req -x509 -nodes -days 365 \
   -keyout gitea-tls.key \
   -subj "/CN=gitea-http.dev-tools.svc.cluster.local"
 
-  kubectl create -n istio-system secret tls gitea-selfsigned-tls \
-  --cert=gitea-tls.crt \
-  --key=gitea-tls.key
+kubectl create -n istio-system secret tls gitea-selfsigned-tls \
+--cert=gitea-tls.crt \
+--key=gitea-tls.key
+
+kubectl -n apps create configmap gitea-selfsigned-ca \
+  --from-file=ca.crt=gitea-tls.crt
+kubectl -n apps create secret generic gitea-selfsigned-ca \
+  --from-file=ca.crt=gitea-tls.crt

@@ -49,10 +49,24 @@ helm upgrade --install argocd argo/argo-cd -n argocd --create-namespace -f argoc
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
 # 패스워드를 간단하게 변경하려면 argocd-server instance에 직접 명령어 수행(admin ui는 8자 길이제한이 있음)
 
+# argocd-repo-server가 docker pull을 할 때 사용할 docker registry secret 생성
+#kubectl create secret docker-registry docker-registry-gitea-cred \
+#  --docker-server=gitea-https.dev-tools.svc.cluster.local:443 \
+#  --docker-username=admin \
+#  --docker-password=admin \
+#  --docker-email=unused@k8s.dev \
+#  -n argocd
+kubectl create secret docker-registry docker-registry-gitea-cred \
+  --docker-server=gitea-https.dev-tools.svc.cluster.local:443 \
+  --docker-username=admin \
+  --docker-password=admin \
+  --docker-email=unused@k8s.dev \
+  -n apps
+
 # repo https 비활성화
-kubectl apply -f argocd-configmap.yaml
-kubectl rollout restart deploy -n argocd argocd-repo-server
-kubectl rollout restart deploy -n argocd argocd-server
+#kubectl apply -f argocd-configmap.yaml
+#kubectl rollout restart deploy -n argocd argocd-repo-server
+#kubectl rollout restart deploy -n argocd argocd-server
 
 
 ## argocd 삭제시 helm uninstall argocd -n argocd 만으로는 데이터가 모두 삭제되지 않음
@@ -61,4 +75,8 @@ kubectl delete applications --all -A
 # 모든 AppProject 삭제
 kubectl delete appprojects --all -A
 # CRD 삭제(Custom Resource Definition)
-kubectl delete crd applications.argoproj.io appprojects.argoproj.io
+kubectl delete crd applications.argoproj.io appprojects.argoproj.io applicationsets.argoproj.io
+
+## application 안지워질때
+kubectl get application -n argocd -o yaml
+kubectl patch application backend-app -n argocd -p '{"metadata":{"finalizers":[]}}' --type=merge

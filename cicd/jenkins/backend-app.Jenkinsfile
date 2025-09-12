@@ -76,7 +76,7 @@ spec:
 
           dir('backend-app') {
             sh 'pwd && ls -la'
-            sh 'sh ./gradlew clean build -x test'
+            sh 'sh ./gradlew bootJar -x test'
             sh 'mv ./app/build/libs/*.jar ./'
           }
         }

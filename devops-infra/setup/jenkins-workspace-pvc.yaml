@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jenkins-gradle-cache
+  namespace: dev-tools       # 원하는 namespace
+spec:
+  accessModes:
+    - ReadWriteOnce        # 단일 노드 읽기/쓰기
+  resources:
+    requests:
+      storage: 1Gi         # 요청할 스토리지 용량
+  storageClassName: standard  # 사용하려는 StorageClass 이름

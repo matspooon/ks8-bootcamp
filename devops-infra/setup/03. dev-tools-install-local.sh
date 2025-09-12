@@ -18,6 +18,7 @@ helm repo add jenkins https://charts.jenkins.io
 helm repo update
 helm upgrade --install jenkins jenkins/jenkins -n dev-tools -f jenkins-dev.yaml
 helm upgrade jenkins jenkins/jenkins -n dev-tools -f jenkins-dev.yaml
+kubectl apply -f jenkins-workspace-pvc.yaml
 
 # jenkins : kaniko 설치
 ## k8s 클러스터내의 gitea에 kaniko executor image 등록 : 인터넷
@@ -41,9 +42,23 @@ kubectl create secret docker-registry docker-registry-credential \
 # argocd 설치
 helm repo add argo https://argoproj.github.io/argo-helm
 helm repo update
-helm install argocd argo/argo-cd -n argocd --create-namespace -f argocd-dev-values.yaml
+helm upgrade --install argocd argo/argo-cd -n argocd --create-namespace -f argocd-dev-values.yaml
 # values update 후 helm 을 통해 반영
 # helm upgrade argocd argo/argo-cd -n argocd -f argocd-dev-values.yaml
 # admin 비번확인
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
 # 패스워드를 간단하게 변경하려면 argocd-server instance에 직접 명령어 수행(admin ui는 8자 길이제한이 있음)
+
+# repo https 비활성화
+kubectl apply -f argocd-configmap.yaml
+kubectl rollout restart deploy -n argocd argocd-repo-server
+kubectl rollout restart deploy -n argocd argocd-server
+
+
+## argocd 삭제시 helm uninstall argocd -n argocd 만으로는 데이터가 모두 삭제되지 않음
+# 모든 Application 삭제
+kubectl delete applications --all -A
+# 모든 AppProject 삭제
+kubectl delete appprojects --all -A
+# CRD 삭제(Custom Resource Definition)
+kubectl delete crd applications.argoproj.io appprojects.argoproj.io

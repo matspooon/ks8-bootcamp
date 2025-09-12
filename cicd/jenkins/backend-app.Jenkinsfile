@@ -48,14 +48,15 @@ spec:
         claimName: jenkins-gradle-cache
 """
       defaultContainer 'gradle'
-      customomWorkspace '/workspace'
+      customWorkspace '/workspace'
     }
   }
   environment {
     REGISTRY = 'gitea-http.dev-tools.svc.cluster.local:3000'
     NAMESPACE = 'admin'
     IMAGE = 'backend-app'
-    TAG = "${env.BUILD_NUMBER}"
+    // TAG = "${env.BUILD_NUMBER}"
+    TAG = 'latest'
     BRANCH = 'main'
     GITHUB_CRED_ID = 'github-matspooon-credential'
   }

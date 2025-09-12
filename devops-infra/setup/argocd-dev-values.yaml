@@ -7,7 +7,13 @@ server:
     type: ClusterIP     # NodePort나 LoadBalancer로 바꾸고 싶으면 여기 수정
   ingress:
     enabled: false      # Ingress를 사용하지 않을 경우
+  insecure: true        # gitea repo 호출시 https가 아닌 http로 호출
 configs:
   secret:
     # 'admin' 비번을 apache htpasswd 방식으로 암호화한 문자열(htpasswd -nbBC 10 "" admin | tr -d ':\n' | sed 's/$2y/$2a/')
     argocdServerAdminPassword: $2a$10$HfRDVUmYAudkmqM.UqwKSudNyzFXecjwyApMBfBNT1PwgoSRyVvum
+  # repositories:
+  #   - url: https://gitea-http.dev-tools.svc.cluster.local:3000
+  #     type: git
+  #     name: gitea-repo
+  #     insecure: "true"   # 이 옵션 추가

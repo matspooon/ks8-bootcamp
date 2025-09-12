@@ -67,3 +67,23 @@ spec:
           host: argocd-server.argocd.svc.cluster.local
           port:
             number: 80
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: gitea-https-vs
+  namespace: istio-system
+spec:
+  hosts:
+  - gitea-https.dev-tools.svc.cluster.local
+  gateways:
+  - msa-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: gitea-http.dev-tools.svc.cluster.local
+        port:
+          number: 3000

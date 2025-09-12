@@ -22,4 +22,5 @@ spec:
       credentialName: selfsigned-gateway-cert   # 위에서 만든 Secret 이름
     hosts:
     - "*.k8s.dev"       # 와일드카드 호스트
+    - "gitea-https.dev-tools.svc.cluster.local"
 

@@ -42,4 +42,14 @@ kubectl port-forward -n dev-tools svc/jenkins 8080:8080
 <pre>
 # k8s cluster에 세팅된 docker-registry-credential secret 확인
 kubectl get secret docker-registry-credential -n dev-tools -o jsonpath='{.data.\.dockerconfigjson}' | base64 -d
+# Argo CD에서 Application 리소스를 삭제할 때, 내부적으로 최종 동기화(cleanup) 작업을 기다리다가 stuck 되는 경우가 있습니다. (특히 ImagePullBackOff 같은 상태일 때 자주 발생)
+# argocd application 강제 삭제
+kubectl delete application backend-app -n argocd --grace-period=0 --force --cascade=orphan
+kubectl patch application backend-app -n argocd -p '{"metadata":{"finalizers":null}}' --type=merge
 </pre>
+
+# argocd가 배포시 사용하는 image pull하는 docker registry문제
+docker registry는 default로 https통신을 강제한다. 
+k8s cluster 내에 설치한 gitea는 http service만을 제공하므로 별도의 HTTPS Proxy를 통하지 않는다면, http통신을 하도록 변경해야 하는데,
+argocd 설정이나, apps.yaml에서 포함하는 repository설정으로는 이것을 강제할 수 없고, docker setting으로만 변경할 수 있다.
+window docker desktop의 경우 '설정' / 'Docker Engine' 메뉴에서 다음을 추가함으로써 http 통신을 하도록 변경할 수 있다.

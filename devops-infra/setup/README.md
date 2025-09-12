@@ -18,6 +18,17 @@ values/gitea-values.yaml # optional Helm values for Gitea
 values/jenkins-values.yaml
 </pre>
 
+## gitea, jenkins, argocd로 CICD를 docker desktop의 kubernetes cluster에 구성할 때 가장 곤란했던점
+***********************************************************************************************
+argocd가 pull을 하는 image 주소를 k8s cluster의 내부 주소인 gitea-http.dev-tools.svc.cluster.local로
+호출하는 것은 no such host 오류가 발생했으며, chatgpt가 self signed(사설) 인증서 문제나 k8s coredns의 
+문제로 계속 가이드하면서 가장 많은 시간을 허비함.
+결론적으로 argocd가 docker image pull을 하는 것은 jenkins build시 사용하는 kaniko-executor와 달리 docker
+환경을 그대로 사용하므로, docker desktop의 경우 windows hosts 파일과 docker desktop의 설정/Docker Engine에서
+insecure-registries를 등록해줘야만 한다.
+(gitea.k8s.dev 사설 인증서를 윈도우의 루트 CA에 매뉴얼 등록을 한 경우 docker desktop의 insecure 등록은 불필요)
+유닉스환경이라면 containerd에 맞는 설정정보 변경을 해줘야한다.
+
 # helm&k8s uninstall
 helm uninstall gitea -n dev-tools
 kubectl delete namespace dev-tools

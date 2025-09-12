@@ -15,6 +15,7 @@ CN = k8s.dev   # Common Name
 subjectAltName = @alt_names
 
 [alt_names]
-DNS.1 = gitea.k8s.dev   # SAN
-DNS.2 = jenkins.k8s.dev   # SAN
-DNS.3 = argocd.k8s.dev   # SAN
+DNS.1 = *.k8s.dev   # SAN
+DNS.2 = gitea.k8s.dev   # SAN
+DNS.3 = jenkins.k8s.dev   # SAN
+DNS.4 = argocd.k8s.dev   # SAN
